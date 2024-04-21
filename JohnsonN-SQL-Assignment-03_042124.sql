@@ -3,31 +3,31 @@
 /*
 Assignment 3 - Expressions and Data Types
 
-	1.
+	1. Ms. Frances Adams
 
-	2.
+	2. 29496 Mr. Robert Ahlering
 
-	3.
+	3. Customer ID 29486 is: Ms. Kim Abercrombie
 
-	4.
+	4. Product Category 10 -- Brakes
 
-	5a.
+	5a. 14304.42
 
-	5b.
+	5b. 14304.42
 
-	6a.
+	6a. 1419.95
 
-	6b.
+	6b. 1955.04
 
-	7a.
+	7a. PO19372114749, 2004-06-08
 
-	7b.
+	7b. 29568, 2004-06-01
 
-	7c.
+	7c. 5
 
-	7d.
+	7d. 5
 
-	8.
+	8. SELECT CAST(GETDATE() AS DATE) AS MyPCDate;
 
 PURPOSE:
 
@@ -94,9 +94,11 @@ USE AdventureWorksLT2012;
 --		Don't forget to include a space between each part of the name. Assign CustomerName as the alias
 --		for the derived column. Order the results in alphabetical order by last name then by first name.
 --		QUESTION:		What is the CustomerName with the CustomerID of 29489?
---		YOUR ANSWER:	
+--		YOUR ANSWER:	Ms. Frances Adams
 --
-
+SELECT CustomerId, CONCAT(Title, ' ', FirstName, ' ', LastName) AS CustomerName
+FROM SalesLT.Customer
+ORDER BY LastName, FirstName ASC;
 
 
 
@@ -109,8 +111,10 @@ USE AdventureWorksLT2012;
 --		HINT: Look at the data type of the fields to which you are concatenating the customer id and cast 
 --		customer id to match.
 --		QUESTION:		What is the value for CustomerInfo in row 6?
---		YOUR ANSWER:	
-
+--		YOUR ANSWER:	29496 Mr. Robert Ahlering
+SELECT CONCAT(CAST(CustomerID AS NVARCHAR), ' ', Title, ' ', FirstName, ' ', LastName) AS CustomerInfo
+FROM SalesLT.Customer
+ORDER BY LastName, FirstName ASC;
 
 
 
@@ -121,8 +125,10 @@ USE AdventureWorksLT2012;
 --					Customer ID 29485 is: Ms. Catherine Abel
 --		Use the same alias and sort order as #2.
 --		QUESTION:		What is the value for CustomerInfo in row 2?
---		YOUR ANSWER:	
-
+--		YOUR ANSWER:	Customer ID 29486 is: Ms. Kim Abercrombie
+SELECT CONCAT('Customer ID ', CAST(CustomerID AS NVARCHAR), ' is: ', Title, ' ', FirstName, ' ', LastName) AS CustomerInfo
+FROM SalesLT.Customer
+ORDER BY LastName, FirstName ASC;
 
 
 
@@ -133,9 +139,11 @@ USE AdventureWorksLT2012;
 --					Product Category 1 -- Bikes 
 --		Give the derived column a meaningful alias (column name) and sort by the derived column in ascending order.
 --		QUESTION:		What is the value in row 2?
---		YOUR ANSWER:	
+--		YOUR ANSWER:	Product Category 10 -- Brakes
 
-
+SELECT CONCAT('Product Category ', CAST(ProductCategoryID AS NVARCHAR), ' -- ', NAME) AS ProductCategoryInfo
+FROM SalesLT.ProductCategory
+ORDER BY ProductCategoryInfo ASC;
 
 
 
@@ -149,16 +157,20 @@ USE AdventureWorksLT2012;
 
 --a.	CAST is the ANSI standard. Write the statement using CAST.
 --		QUESTION:		What is the TotalCost in record 3?
---		YOUR ANSWER:	
-
+--		YOUR ANSWER:	14304.42
+SELECT SalesOrderID, ROUND(CAST((UnitPrice * (1 - UnitPriceDiscount) * OrderQty) AS MONEY), 2) AS TotalCost, ROUND(CAST(LineTotal AS MONEY), 2) AS LineTotal
+FROM SalesLT.SalesOrderDetail
+ORDER BY TotalCost DESC;
 
 
 
 --b.	Write the statement again using CONVERT instead of CAST. CONVERT is also commonly used. 
 --      Change the sort to TotalCost in ascending order.
 --		QUESTION:		What is the TotalCost in record 3?
---		YOUR ANSWER:	
-
+--		YOUR ANSWER:	14304.42
+SELECT SalesOrderID, ROUND(CONVERT(MONEY, (UnitPrice * (1 - UnitPriceDiscount) * OrderQty)), 2) AS TotalCost, ROUND(CONVERT(MONEY, LineTotal), 2) AS LineTotal
+FROM SalesLT.SalesOrderDetail
+ORDER BY TotalCost DESC;
 
 
 
@@ -174,16 +186,25 @@ USE AdventureWorksLT2012;
 --a.	First write the requested statement using CAST. CAST is the ANSI standard. There will be five 
 --		fields (columns). There will be one row for each product in the Product table. 
 --		QUESTION:		What is the Profit number in row 8?
---		YOUR ANSWER:	
+--		YOUR ANSWER:	1419.95
+SELECT ProductID, Name, ROUND(CAST(ListPrice AS MONEY), 2) AS ListPrice,
+ROUND(CAST(StandardCost * 1.03 AS MONEY), 2) AS FutureCost,
+ROUND(CAST(ListPrice - (StandardCost * 1.03) AS MONEY), 2) AS Profit
 
-
+FROM SalesLT.Product
+ORDER BY Profit DESC;
 
 
 --b.	Next write the statement from 6a again using CONVERT. There will be five 
 --		fields (columns). There will be one row for each product in the Product table. 
 --		QUESTION:		What is the FutureCost number in row 5?
---		YOUR ANSWER:	
+--		YOUR ANSWER:	1955.04
+SELECT ProductID, Name, ROUND(CONVERT(MONEY, ListPrice), 2) AS ListPrice,
+ROUND(CONVERT(MONEY, StandardCost * 1.03), 2) AS FutureCost,
+ROUND(CONVERT(MONEY, ListPrice - (StandardCost * 1.03)), 2) AS Profit
 
+FROM SalesLT.Product
+ORDER BY Profit DESC;
 
 
 
@@ -194,7 +215,12 @@ USE AdventureWorksLT2012;
 
 --a.	CAST is the ANSI standard. Write the statement using CAST. 
 --		QUESTION:		What is the PurchaseOrderNumber and ShipDate in the first record?
---		YOUR ANSWER:	
+--		YOUR ANSWER:	PO19372114749, 2004-06-08
+SELECT PurchaseOrderNumber, SalesOrderID, CustomerID, CAST(OrderDate AS DATE) AS OrderDate,
+CAST(DueDate AS DATE) AS DueDate, CAST(ShipDate AS DATE) AS ShipDate
+
+FROM SalesLT.SalesOrderHeader
+ORDER BY CustomerID ASC;
 
 
 
@@ -202,8 +228,12 @@ USE AdventureWorksLT2012;
 
 --b.	Write the statement again using CONVERT.
 --		QUESTION:		What is the CustomerID and OrderDate in the record 4?
---		YOUR ANSWER:	
+--		YOUR ANSWER:	29568, 2004-06-01
+SELECT PurchaseOrderNumber, SalesOrderID, CustomerID, CONVERT(DATE, OrderDate) AS OrderDate,
+CONVERT(DATE, DueDate) AS DueDate, CONVERT(DATE, ShipDate) AS ShipDate
 
+FROM SalesLT.SalesOrderHeader
+ORDER BY CustomerID ASC;
 
 
 
@@ -214,8 +244,12 @@ USE AdventureWorksLT2012;
 --		the result as a positive number. Be sure Datetime fields still show only the date. 
 --		The DateDiff function is not an ANSI standard; don't use it in this statement. 
 --		QUESTION:		What is the value for ShipDays in all the records?
---		YOUR ANSWER:	
+--		YOUR ANSWER:	5
+SELECT PurchaseOrderNumber, SalesOrderID, CustomerID, CAST(OrderDate AS DATE) AS OrderDate,
+CAST(DueDate AS DATE) AS DueDate, CAST(ShipDate AS DATE) AS ShipDate, ABS(CAST(ShipDate - DueDate AS INT)) AS ShipDays
 
+FROM SalesLT.SalesOrderHeader
+ORDER BY CustomerID ASC;
 
 
 
@@ -225,8 +259,12 @@ USE AdventureWorksLT2012;
 --d.	Rewrite the statement from 7c to use the DateDiff function to find the 
 --		difference between the ShipDate and the DueDate. Again, show only the date in datetime fields.
 --		QUESTION:		What is the value for ShipDays in all the records?
---		YOUR ANSWER:	
+--		YOUR ANSWER:	5
+SELECT PurchaseOrderNumber, SalesOrderID, CustomerID, CAST(OrderDate AS DATE) AS OrderDate,
+CAST(DueDate AS DATE) AS DueDate, CAST(ShipDate AS DATE) AS ShipDate, DATEDIFF(DAY, ShipDate, DueDate) AS ShipDays
 
+FROM SalesLT.SalesOrderHeader
+ORDER BY CustomerID ASC;
 
 
 
@@ -238,7 +276,7 @@ USE AdventureWorksLT2012;
 --		on which the instance of SQL Server is running (this means it shows the date and time of the PC on which 
 --		the function is executed). The time zone offset is not included. Write the statement so it will execute.
 --		Format the result to show only the date portion of the field and give it the alias of MyPCDate.
-
+SELECT CAST(GETDATE() AS DATE) AS MyPCDate;
 
 
 
